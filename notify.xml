@@ -8,7 +8,7 @@
 <copyright>Copyright</copyright>
 <license>MIT</license>
 <version>1</version>
-<description>Sends an e-mail to Vivian on content change.  Used for monitoring.</description>
+<description>Sends an e-mail to specified e-mail on content change.  Used for monitoring and moderation.</description>
 <files>
    <filename plugin="notify">notify.php</filename>
 </files>

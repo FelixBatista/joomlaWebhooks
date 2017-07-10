@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: nameofplugin.php revision date lasteditedby $
+ * @version		$Id: notify.php 07/10/2017 wrparker $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
