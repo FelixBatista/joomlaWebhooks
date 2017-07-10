@@ -6,11 +6,11 @@ Zip files up and use the Joomla Plugin Manager (upload install) to install.
 
 To change where the e-mail goes update line 47
 
-$to = array("webmaster@cns.utexas.edu", "vabagiu@austin.utexas.edu");
+$to = array("email1@example.com", "email2@example.com");
 
 To update sender, change line 50:
 
-$mailer->setSender('webmaster@cns.utexas.edu');
+$mailer->setSender('email@example.com');
 
 By W. Ryan parker
 
