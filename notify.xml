@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1" type="plugin" group="content">
+<name>Email Notification on Change</name>
+<creationDate>07-03-17</creationDate>
+<author>W. Ryan Parker</author>
+<authorEmail>wrparker@utexas.edu</authorEmail>
+<authorUrl>https://cns.utexas.edu</authorUrl>
+<copyright>Copyright</copyright>
+<license>MIT</license>
+<version>1</version>
+<description>Sends an e-mail to Vivian on content change.  Used for monitoring.</description>
+<files>
+   <filename plugin="notify">notify.php</filename>
+</files>
+
+<config />
+</extension>
