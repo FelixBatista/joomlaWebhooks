@@ -1,5 +1,5 @@
 # joomlaEmailNotification
-##Tested with Joomla v3.7.x
+## Tested with Joomla v3.7.x
 Sends an E-mail notification on saving content.  
 
 Zip files up and use the Joomla Plugin Manager (upload install) to install.
