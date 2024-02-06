@@ -15,6 +15,8 @@
  // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 //jimport('joomla.plugin.plugin');
+JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webhooks'));
+
 
  // Include the WebhookHandler class
  require_once(__DIR__ . '\webhook_handler.php');
@@ -33,7 +35,10 @@ class plgContentWebhooks extends JPlugin {
 
     public function onContentChangeState($context, $pks, $value)
     {
+        JLog::add('Detected a status change', JLog::INFO, 'webhooks');
+
         if ($context == 'com_content.article' && $value == 1) {  // here we check if its published
+            JLog::add('Article was published', JLog::INFO, 'webhooks');
             foreach ($pks as $pk) {
                 // Load the article object
                 $article = JTable::getInstance('content');
@@ -41,6 +46,7 @@ class plgContentWebhooks extends JPlugin {
 
                 if ($value == 1 && $article->state != 1) {    // TODO: Not sure if we need to check if it was not published before
                     // Prepare your webhook data
+                    JLog::add('Status changed', JLog::INFO, 'webhooks');
                     $data = [
                         'title' => $article->title,
                         'id' => $article->id,
@@ -49,6 +55,7 @@ class plgContentWebhooks extends JPlugin {
 
                     // Send the webhook
                     $result = WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
+                    JLog::add('POST sent', JLog::INFO, 'webhooks');
                 }
             }
         }

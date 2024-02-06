@@ -1,5 +1,7 @@
 <?php
 defined('_JEXEC') or die;
+JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webhooks'));
+
 
 class WebhookHandler
 {
