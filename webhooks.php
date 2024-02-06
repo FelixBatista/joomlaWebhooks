@@ -17,7 +17,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 //jimport('joomla.plugin.plugin');
 
  // Include the WebhookHandler class
- require_once(__DIR__ . '/webhook_handler.php');
+ require_once(__DIR__ . '\webhook_handler.php');
 
 class plgContentWebhooks extends JPlugin {
 
@@ -28,18 +28,18 @@ class plgContentWebhooks extends JPlugin {
         parent::__construct($subject, $config);
         
         // Load the configuration settings
-        $this->config = include(__DIR__ . '/webhook_config.php');
+        $this->config = include(__DIR__ . '\webhook_config.php');
     }
 
     public function onContentChangeState($context, $pks, $value)
     {
-        if ($context == 'com_content.article' && $value == 1) {
+        if ($context == 'com_content.article' && $value == 1) {  // here we check if its published
             foreach ($pks as $pk) {
                 // Load the article object
                 $article = JTable::getInstance('content');
                 $article->load($pk);
 
-                if ($article->state != 1) {
+                if ($value == 1 && $article->state != 1) {    // TODO: Not sure if we need to check if it was not published before
                     // Prepare your webhook data
                     $data = [
                         'title' => $article->title,
@@ -48,7 +48,7 @@ class plgContentWebhooks extends JPlugin {
                     ];
 
                     // Send the webhook
-                    WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
+                    $result = WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
                 }
             }
         }
