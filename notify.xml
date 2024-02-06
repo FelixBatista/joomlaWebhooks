@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="1" type="plugin" group="content">
-<name>Email Notification on Change</name>
-<creationDate>07-03-17</creationDate>
-<author>W. Ryan Parker</author>
-<authorEmail>wrparker@utexas.edu</authorEmail>
-<authorUrl>https://cns.utexas.edu</authorUrl>
+<name>Webhooks</name>
+<creationDate>06-02-24</creationDate>
+<author>Felix Batista</author>
+<authorEmail>felixb.neto@gmail.com</authorEmail>
+<authorUrl>https://github.com/FelixBatista</authorUrl>
 <copyright>Copyright</copyright>
 <license>MIT</license>
 <version>1</version>
-<description>Sends an e-mail to specified e-mail on content change.  Used for monitoring and moderation.</description>
+<description>POSTS to webhook after an article is published.</description>
 <files>
    <filename plugin="notify">notify.php</filename>
 </files>
