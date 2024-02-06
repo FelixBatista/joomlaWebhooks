@@ -11,6 +11,8 @@
 <description>POSTS to webhook after an article is published.</description>
 <files>
    <filename plugin="webhooks">webhooks.php</filename>
+   <filename>webhook_handler.php</filename>
+   <filename>webhook_config.php</filename>
 </files>
 
 <config />
