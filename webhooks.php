@@ -16,6 +16,9 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 //jimport('joomla.plugin.plugin');
 
+ // Include the WebhookHandler class
+ require_once(__DIR__ . '/webhook_handler.php');
+
 class plgContentWebhooks extends JPlugin {
 
     private $config;
@@ -28,19 +31,44 @@ class plgContentWebhooks extends JPlugin {
         $this->config = include(__DIR__ . '/webhook_config.php');
     }
 
-       //protected $autoloadLanguage = true;
+    public function onContentChangeState($context, $pks, $value)
+    {
+        if ($context == 'com_content.article' && $value == 1) {
+            foreach ($pks as $pk) {
+                // Load the article object
+                $article = JTable::getInstance('content');
+                $article->load($pk);
+
+                if ($article->state != 1) {
+                    // Prepare your webhook data
+                    $data = [
+                        'title' => $article->title,
+                        'id' => $article->id,
+                        'state' => $article->state
+                    ];
+
+                    // Send the webhook
+                    WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
+                }
+            }
+        }
+    } 
+    
+    
+    /* FREEZING THIS PART OF THE CODE FOR NOW
+    //protected $autoloadLanguage = true;
     function onContentChangeState($context, $pks, $value) {
         $config = JFactory::getConfig();
         $user =& JFactory::getUser();   
         
 
-        $title = $article->title;       
+        //$title = $article->title;       TODO: article was part of the onContentAfterSave, but it does not come with the OnContentChangesState. I need to find a way to add a title.
         $uri = & JFactory::getURI(); 
         $url = $uri->toString(); 
         $url = strtok($url, '?');
         
         
-            $user =& JFactory::getUser();
+            $user =& JFactory::getUser();                             // TODO: is this relevant to keep?
             $user_eid = $user->get('username'); //This SHOULD be EID
             $user_name = $user->get('name');
             $user_email = $user->get('email');
@@ -71,4 +99,5 @@ class plgContentWebhooks extends JPlugin {
         JError::raiseNotice( 100, 'Communications Coordinator notified of changes.' );    
         }                
     }
+    */
 }
