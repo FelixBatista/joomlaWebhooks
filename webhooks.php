@@ -44,19 +44,18 @@ class plgContentWebhooks extends JPlugin {
                 $article = JTable::getInstance('content');
                 $article->load($pk);
 
-                if ($value == 1 && $article->state != 1) {    // TODO: Not sure if we need to check if it was not published before
-                    // Prepare your webhook data
-                    JLog::add('Status changed', JLog::INFO, 'webhooks');
-                    $data = [
-                        'title' => $article->title,
-                        'id' => $article->id,
-                        'state' => $article->state
-                    ];
+                // Prepare your webhook data
+                JLog::add('Status changed', JLog::INFO, 'webhooks');
+                $data = [
+                    'title' => $article->title,
+                    'id' => $article->id,
+                    'state' => $article->state
+                ];
 
-                    // Send the webhook
-                    $result = WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
-                    JLog::add('POST sent', JLog::INFO, 'webhooks');
-                }
+                // Send the webhook
+                $result = WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
+                JLog::add('POST sent', JLog::INFO, 'webhooks');
+                
             }
         }
     } 
