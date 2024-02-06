@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		$Id: webhooks.php 07/10/2017 wrparker $
+ * @version		$Id: webhooks.php 06/02/2024 FelixBatista $
  * @package		Joomla
  * @subpackage	Content
  * @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
@@ -17,8 +17,19 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 //jimport('joomla.plugin.plugin');
 
 class plgContentWebhooks extends JPlugin {
+
+    private $config;
+
+    public function __construct(&$subject, $config)
+    {
+        parent::__construct($subject, $config);
+        
+        // Load the configuration settings
+        $this->config = include(__DIR__ . '/webhook_config.php');
+    }
+
        //protected $autoloadLanguage = true;
-    function onContentAfterSave($context, $article, $isNew) {
+    function onContentChangeState($context, $pks, $value) {
         $config = JFactory::getConfig();
         $user =& JFactory::getUser();   
         
