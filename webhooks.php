@@ -25,16 +25,15 @@ class plgContentWebhooks extends JPlugin {
 
     private $config;
 
-    public function __construct(&$subject, $config)
-    {
-        parent::__construct($subject, $config);
-        
-        // Load the configuration settings
-        $this->config = include(__DIR__ . '\webhook_config.php');
-    }
-
     public function onContentChangeState($context, $pks, $value)
     {
+        // Access plugin parameters
+        $webhookUrl = $this->params->get('webhook_url', '');
+
+        // Now, you can use $webhookUrl in your logic
+        JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webhooks'));
+        JLog::add('Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
+
         JLog::add('Detected a status change', JLog::INFO, 'webhooks');
 
         if ($context == 'com_content.article' && $value == 1) {  // here we check if its published

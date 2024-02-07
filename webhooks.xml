@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="0.1" encoding="utf-8"?>
 <extension version="1" type="plugin" group="content">
 <name>Webhooks</name>
-<creationDate>06-02-24</creationDate>
+<creationDate>24-02-06</creationDate>
 <author>Felix Batista</author>
 <authorEmail>felixb.neto@gmail.com</authorEmail>
 <authorUrl>https://github.com/FelixBatista</authorUrl>
@@ -15,5 +15,16 @@
    <filename>webhook_config.php</filename>
 </files>
 
-<config />
+<config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="webhook_url" type="text" default="" label="Webhook URL" description="Enter the URL to send webhooks to." size="100"/>
+                <field name="webhook_method" type="list" default="POST" label="Webhook Method" description="Choose the HTTP method for the webhook.">
+                    <option value="POST">POST</option>
+                    <option value="GET">GET</option>
+                </field>
+                <!-- Add other configuration fields here -->
+            </fieldset>
+        </fields>
+    </config>
 </extension>

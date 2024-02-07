@@ -9,9 +9,12 @@ class WebhookHandler
     {
         $jsonData = json_encode($data);
 
+        //Get method from configuration
+        $webhookMethod = $this->params->get('webhook_method', 'POST');
+
         // Initialize cURL
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $webhookMethod);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -31,8 +34,7 @@ class WebhookHandler
         curl_close($ch);
 
         if (isset($error_msg)) {
-            // Return or handle the error message as needed
-            return $error_msg;
+            JLog::add('Error sending webhook: ' . $error_msg, JLog::ERROR, 'yourpluginname');
         }
 
         return $result;
