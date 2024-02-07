@@ -45,7 +45,6 @@ class plgContentWebhooks extends JPlugin {
                 $article->load($pk);
 
                 // Prepare your webhook data
-                JLog::add('Status changed', JLog::INFO, 'webhooks');
                 $data = [
                     'title' => $article->title,
                     'id' => $article->id,
@@ -54,8 +53,7 @@ class plgContentWebhooks extends JPlugin {
 
                 // Send the webhook
                 $result = WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
-                JLog::add('POST sent', JLog::INFO, 'webhooks');
-                
+                JLog::add('POST sent' . $result, JLog::INFO, 'webhooks');
             }
         }
     } 
