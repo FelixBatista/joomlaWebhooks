@@ -28,7 +28,8 @@ class plgContentWebhooks extends JPlugin {
     public function onContentChangeState($context, $pks, $value)
     {
         // Access plugin parameters
-        $webhookUrl = $this->params->get('webhook_url', '');
+        $webhookUrl = $this->params->get('webhook_url');
+        $webhookMethod = $this->params->get('webhook_method');
 
         // Now, you can use $webhookUrl in your logic
         JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webhooks'));
@@ -51,7 +52,7 @@ class plgContentWebhooks extends JPlugin {
                 ];
 
                 // Send the webhook
-                $result = WebhookHandler::sendWebhook($this->config['webhookUrl'], $data);
+                $result = WebhookHandler::sendWebhook($webhookUrl, $data, $webhookMethod);
                 JLog::add('POST sent' . $result, JLog::INFO, 'webhooks');
             }
         }

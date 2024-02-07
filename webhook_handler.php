@@ -5,12 +5,9 @@ JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webh
 
 class WebhookHandler
 {
-    public static function sendWebhook($url, $data)
+    public static function sendWebhook($url, $data, $webhookMethod)
     {
         $jsonData = json_encode($data);
-
-        //Get method from configuration
-        $webhookMethod = $this->params->get('webhook_method', 'POST');
 
         // Initialize cURL
         $ch = curl_init($url);

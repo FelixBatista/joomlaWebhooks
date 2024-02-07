@@ -1,4 +1,4 @@
-<?xml version="0.1" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <extension version="1" type="plugin" group="content">
 <name>Webhooks</name>
 <creationDate>24-02-06</creationDate>
@@ -12,9 +12,7 @@
 <files>
    <filename plugin="webhooks">webhooks.php</filename>
    <filename>webhook_handler.php</filename>
-   <filename>webhook_config.php</filename>
 </files>
-
 <config>
    <fields name="params">
       <fieldset name="basic">
@@ -23,7 +21,6 @@
                <option value="POST">POST</option>
                <option value="GET">GET</option>
             </field>
-            <!-- Add other configuration fields here -->
       </fieldset>
    </fields>
 </config>
