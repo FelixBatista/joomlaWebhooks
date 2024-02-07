@@ -16,15 +16,15 @@
 </files>
 
 <config>
-        <fields name="params">
-            <fieldset name="basic">
-                <field name="webhook_url" type="text" default="" label="Webhook URL" description="Enter the URL to send webhooks to." size="100"/>
-                <field name="webhook_method" type="list" default="POST" label="Webhook Method" description="Choose the HTTP method for the webhook.">
-                    <option value="POST">POST</option>
-                    <option value="GET">GET</option>
-                </field>
-                <!-- Add other configuration fields here -->
-            </fieldset>
-        </fields>
-    </config>
+   <fields name="params">
+      <fieldset name="basic">
+            <field name="webhook_url" type="text" default="" label="Webhook URL" description="Enter the URL to send webhooks to." size="100"/>
+            <field name="webhook_method" type="list" default="POST" label="Webhook Method" description="Choose the HTTP method for the webhook.">
+               <option value="POST">POST</option>
+               <option value="GET">GET</option>
+            </field>
+            <!-- Add other configuration fields here -->
+      </fieldset>
+   </fields>
+</config>
 </extension>
