@@ -29,56 +29,67 @@ class plgContentWebhooks extends JPlugin {
 
     private $config;
 
-    public function onContentChangeState($context, $pks, $value)
-    {
+    private function sendWebhookForArticle($articleId) {
+        // Load the article object
+        $article = JTable::getInstance('content');
+        $article->load($articleId);
+
+        // Get Article URL
+        $link = JRoute::_(RouteHelper::getArticleRoute($article->id . ':' . $article->alias, $article->catid, $article->language));
+
+        // Fetch category title
+        $category = JTable::getInstance('category');
+        $category->load($article->catid);
+        $categoryTitle = $category->title;
+
+        // Fetch tags
+        $tagsHelper = new JHelperTags();
+        $tagList = $tagsHelper->getItemTags('com_content.article', $article->id);
+        $tagNames = array();
+        foreach ($tagList as $tag) {
+            $tagNames[] = $tag->title;
+        }
+
+        // Prepare Article body
+        $body = $article->introtext . $article->fulltext;
+
+        // Prepare your webhook data
+        $data = [
+            'title' => $article->title,
+            'link' => $link,
+            'category' => $categoryTitle,
+            'tags' => $tagNames,
+            'body' => $body
+        ];
+
         // Access plugin parameters
         $webhookUrl = $this->params->get('webhook_url');
         $webhookMethod = $this->params->get('webhook_method');
 
-        JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webhooks'));
-        JLog::add('Detected a status change. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
+        // Send the webhook
+        WebhookHandler::sendWebhook($webhookUrl, $data, $webhookMethod);
+    }
 
 
+    /* I Noticed that if you opne an article, change the status there and then save it, the onContentChangeSate does not detect as a state change and then nothing happens.
+        Here we then track the save events as well. */
 
-        if ($context == 'com_content.article' && $value == 1) {  // here we check if its published
-            JLog::add('Article was published', JLog::INFO, 'webhooks');
+    // Detect save events
+    public function onContentAfterSave($context, $article, $isNew) {
+        if ($context == 'com_content.article' && $article->state == 1) { // here we check if its published. Published = 1.
+            JLog::add('Detected a save event to a published state. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
+            $this->sendWebhookForArticle($article->id);
+        }
+    }
+
+    // Detect state change events, ie. Publish, unpublish
+    public function onContentChangeState($context, $pks, $value)
+    {   
+        if ($context == 'com_content.article' && $value == 1) {  // here we check if its published. Published = 1.
+            JLog::add('Detected a status change. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
             foreach ($pks as $pk) {
-                // Load the article object
-                $article = JTable::getInstance('content');
-                $article->load($pk);
-
-                // Get Article URL
-                $link = JRoute::_(ContentHelperRoute::getArticleRoute($article->id . ':' . $article->alias, $article->catid));
-
-                // Fetch category title
-                $category = JTable::getInstance('category');
-                $category->load($article->catid);
-                $categoryTitle = $category->title;
-
-                // Fetch tags
-                $tags = new JHelperTags;
-                $tagList = $tags->getItemTags('com_content.article', $article->id);
-                $tagNames = array();
-                foreach ($tagList as $tag) {
-                    $tagNames[] = $tag->title;
-                }
-
-                //Prepare Article body
-                $body = $article->introtext . $article->fulltext;
-
-                // Prepare your webhook data
-                $data = [
-                    'title' => $article->title,
-                    'link' => $link,
-                    'category' => $categoryTitle,
-                    'tags' => $tagNames,
-                    'body' => $body
-                ];
-
-                // Send the webhook
-                $result = WebhookHandler::sendWebhook($webhookUrl, $data, $webhookMethod);
-                JLog::add('POST sent: ' . $result, JLog::INFO, 'webhooks');
+                $this->sendWebhookForArticle($pk);
             }
         }
-    } 
+    }
 }

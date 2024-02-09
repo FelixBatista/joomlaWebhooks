@@ -4,11 +4,14 @@ Tested with Joomla v3.7.x
 POSTS on a webhook on publishing articles in Joomla.
 
 ## Instructions
-1. Copy code and change the webhook link on webhook_config file.
+1. Copy code.
 
 2. Zip files up and use the Joomla Plugin Manager (upload install) to install.
 
-3. Enable Email Notification on Change in the plugin manager.
+3. Write the webhook URL and select the correct type of method.
+
+4. Enable Webhooks Plugin.
+
 
 
 
