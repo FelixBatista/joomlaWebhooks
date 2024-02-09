@@ -19,5 +19,3 @@ POSTS on a webhook on publishing articles in Joomla.
 By Felix Batista
 
 Inspired by W. Ryan parker on https://github.com/wrparker/joomlaEmailNotification
-
-MIT License -- 
