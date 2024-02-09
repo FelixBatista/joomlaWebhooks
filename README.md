@@ -1,5 +1,5 @@
 # joomlaWebhooks
-Tested with Joomla v3.7.x
+Tested with Joomla v5.0.2
 ## Description
 POSTS on a webhook on publishing articles in Joomla.
 
