@@ -11,6 +11,10 @@
  * other free or open source software licenses.
  * See COPYRIGHT.php for copyright notices and details.
  */
+
+//Import extensions
+use Joomla\CMS\Router\Route;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
  
  // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -31,11 +35,10 @@ class plgContentWebhooks extends JPlugin {
         $webhookUrl = $this->params->get('webhook_url');
         $webhookMethod = $this->params->get('webhook_method');
 
-        // Now, you can use $webhookUrl in your logic
         JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webhooks'));
-        JLog::add('Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
+        JLog::add('Detected a status change. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
 
-        JLog::add('Detected a status change', JLog::INFO, 'webhooks');
+
 
         if ($context == 'com_content.article' && $value == 1) {  // here we check if its published
             JLog::add('Article was published', JLog::INFO, 'webhooks');
@@ -44,16 +47,37 @@ class plgContentWebhooks extends JPlugin {
                 $article = JTable::getInstance('content');
                 $article->load($pk);
 
+                // Get Article URL
+                $link = JRoute::_(ContentHelperRoute::getArticleRoute($article->id . ':' . $article->alias, $article->catid));
+
+                // Fetch category title
+                $category = JTable::getInstance('category');
+                $category->load($article->catid);
+                $categoryTitle = $category->title;
+
+                // Fetch tags
+                $tags = new JHelperTags;
+                $tagList = $tags->getItemTags('com_content.article', $article->id);
+                $tagNames = array();
+                foreach ($tagList as $tag) {
+                    $tagNames[] = $tag->title;
+                }
+
+                //Prepare Article body
+                $body = $article->introtext . $article->fulltext;
+
                 // Prepare your webhook data
                 $data = [
                     'title' => $article->title,
-                    'id' => $article->id,
-                    'state' => $article->state
+                    'link' => $link,
+                    'category' => $categoryTitle,
+                    'tags' => $tagNames,
+                    'body' => $body
                 ];
 
                 // Send the webhook
                 $result = WebhookHandler::sendWebhook($webhookUrl, $data, $webhookMethod);
-                JLog::add('POST sent' . $result, JLog::INFO, 'webhooks');
+                JLog::add('POST sent: ' . $result, JLog::INFO, 'webhooks');
             }
         }
     } 

@@ -21,18 +21,20 @@ class WebhookHandler
 
         // Execute the request and capture the response
         $result = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         // Check for cURL errors
         if (curl_errno($ch)) {
             $error_msg = curl_error($ch);
-            // Handle the error as needed, e.g., log it or send an alert
+            JLog::add('Error sending webhook: ' . $error_msg, JLog::ERROR, 'webhooks');
+        } elseif ($httpStatusCode < 200 || $httpStatusCode >= 300) {
+            // Handle HTTP response error
+            JLog::add('Webhook POST failed, HTTP status code: ' . $httpStatusCode . ', Response: ' . $result, JLog::ERROR, 'webhooks');
+        } else {
+            JLog::add('Webhook POST successful, HTTP status code: ' . $httpStatusCode, JLog::INFO, 'webhooks');
         }
 
         curl_close($ch);
-
-        if (isset($error_msg)) {
-            JLog::add('Error sending webhook: ' . $error_msg, JLog::ERROR, 'yourpluginname');
-        }
 
         return $result;
     }
