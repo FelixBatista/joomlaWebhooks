@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="1" type="plugin" group="content">
-<name>Webhooks</name>
+<extension version="1" type="plugin" group="content" method="upgrade">
+<name>Plugin - Webhooks</name>
 <creationDate>24-02-06</creationDate>
 <author>Felix Batista</author>
 <authorEmail>felixb.neto@gmail.com</authorEmail>
 <authorUrl>https://github.com/FelixBatista</authorUrl>
 <copyright>Copyright</copyright>
-<license>MIT</license>
+<license>GPLv2</license>
 <version>1</version>
 <description>POSTS to webhook after an article is published.</description>
 <files>
@@ -24,4 +24,7 @@
       </fieldset>
    </fields>
 </config>
+<updateservers>
+   <server type="extension" name="Webhooks">https://github.com/FelixBatista/joomlaWebhooks/blob/master/webhooks.xml</server>
+</updateservers>
 </extension>
