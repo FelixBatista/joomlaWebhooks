@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="1" type="plugin" group="content" method="upgrade">
-<name>Plugin - Webhooks</name>
+<name>Content Sharing - Webhooks</name>
 <creationDate>24-02-06</creationDate>
 <author>Felix Batista</author>
 <authorEmail>felixb.neto@gmail.com</authorEmail>
