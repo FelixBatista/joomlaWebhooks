@@ -23,7 +23,7 @@ JLog::addLogger(array('text_file' => 'webhooks.log.php'), JLog::ALL, array('webh
 
 
  // Include the WebhookHandler class
- require_once(__DIR__ . '\webhook_handler.php');
+ require_once(__DIR__ . '/webhook_handler.php');
 
 class plgContentWebhooks extends JPlugin {
 
