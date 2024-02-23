@@ -15,6 +15,7 @@
 //Import extensions
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
+use Joomla\CMS\Uri\Uri;
  
  // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -30,12 +31,21 @@ class plgContentWebhooks extends JPlugin {
     private $config;
 
     private function sendWebhookForArticle($articleId) {
+        // Access plugin parameters
+        $webhookUrl = $this->params->get('webhook_url');
+        $webhookMethod = $this->params->get('webhook_method');
+
+        // Get Website URL
+        $baseUrl = JUri::root();
+
         // Load the article object
         $article = JTable::getInstance('content');
         $article->load($articleId);
 
         // Get Article URL
-        $link = JRoute::_(RouteHelper::getArticleRoute($article->id . ':' . $article->alias, $article->catid, $article->language));
+        $relativeUrl = RouteHelper::getArticleRoute($article->id . ':' . $article->alias, $article->catid, $article->language);
+        $link = rtrim($baseUrl, '/') . '/' . ltrim($relativeUrl, '/');
+        JLog::add('Link' . $link, JLog::INFO, 'webhooks');
 
         // Fetch category title
         $category = JTable::getInstance('category');
@@ -61,10 +71,6 @@ class plgContentWebhooks extends JPlugin {
             'tags' => $tagNames,
             'body' => $body
         ];
-
-        // Access plugin parameters
-        $webhookUrl = $this->params->get('webhook_url');
-        $webhookMethod = $this->params->get('webhook_method');
 
         // Send the webhook
         WebhookHandler::sendWebhook($webhookUrl, $data, $webhookMethod);
