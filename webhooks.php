@@ -30,6 +30,36 @@ class plgContentWebhooks extends JPlugin {
 
     private $config;
 
+    /**
+     * Check if the category ID is allowed based on plugin configuration.
+     *
+     * @param int|string $catId
+     * @return bool
+     */
+    private function isCategoryAllowed($catId) {
+        $allowedCategories = $this->params->get('categories');
+
+        // If no categories are configured (or setting is empty), allow all categories
+        if (empty($allowedCategories)) {
+            return true;
+        }
+
+        if (!is_array($allowedCategories)) {
+            $allowedCategories = array($allowedCategories);
+        }
+
+        // Filter out empty string/null values (e.g. "All Categories" option selected)
+        $allowedCategories = array_filter($allowedCategories, function($val) {
+            return $val !== '' && $val !== null;
+        });
+
+        if (empty($allowedCategories)) {
+            return true;
+        }
+
+        return in_array((string)$catId, array_map('strval', $allowedCategories), true);
+    }
+
     private function sendWebhookForArticle($articleId) {
         // Access plugin parameters
         $webhookUrl = $this->params->get('webhook_url');
@@ -41,6 +71,18 @@ class plgContentWebhooks extends JPlugin {
         // Load the article object
         $article = JTable::getInstance('content');
         $article->load($articleId);
+
+        // Check if article state is published
+        if (!isset($article->state) || (int) $article->state !== 1) {
+            JLog::add('Article (ID: ' . $articleId . ') state is not published. Webhook skipped.', JLog::INFO, 'webhooks');
+            return true;
+        }
+
+        // Check if category is allowed before preparing payload and cURL request
+        if (!$this->isCategoryAllowed($article->catid)) {
+            JLog::add('Article (ID: ' . $articleId . ') category (' . $article->catid . ') is not in allowed categories. Webhook skipped.', JLog::INFO, 'webhooks');
+            return true;
+        }
 
         // Get Article URL
         $relativeUrl = RouteHelper::getArticleRoute($article->id . ':' . $article->alias, $article->catid, $article->language);
@@ -82,20 +124,41 @@ class plgContentWebhooks extends JPlugin {
 
     // Detect save events
     public function onContentAfterSave($context, $article, $isNew) {
-        if ($context == 'com_content.article' && $article->state == 1) { // here we check if its published. Published = 1.
-            JLog::add('Detected a save event to a published state. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
-            $this->sendWebhookForArticle($article->id);
+        if ($context !== 'com_content.article') {
+            return true;
         }
+
+        // Check if article is published (state == 1)
+        if (!isset($article->state) || (int) $article->state !== 1) {
+            return true;
+        }
+
+        // Check if article category is allowed
+        if (!$this->isCategoryAllowed($article->catid)) {
+            JLog::add('Article category (' . $article->catid . ') is not in allowed categories. Webhook skipped.', JLog::INFO, 'webhooks');
+            return true;
+        }
+
+        $webhookUrl = $this->params->get('webhook_url');
+        JLog::add('Detected a save event to a published state. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
+        $this->sendWebhookForArticle($article->id);
+
+        return true;
     }
 
     // Detect state change events, ie. Publish, unpublish
     public function onContentChangeState($context, $pks, $value)
     {   
-        if ($context == 'com_content.article' && $value == 1) {  // here we check if its published. Published = 1.
-            JLog::add('Detected a status change. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
-            foreach ($pks as $pk) {
-                $this->sendWebhookForArticle($pk);
-            }
+        if ($context !== 'com_content.article' || (int) $value !== 1) {
+            return true;
         }
+
+        $webhookUrl = $this->params->get('webhook_url');
+        JLog::add('Detected a status change to published. Sending data to ' . $webhookUrl, JLog::INFO, 'webhooks');
+        foreach ($pks as $pk) {
+            $this->sendWebhookForArticle($pk);
+        }
+
+        return true;
     }
 }
